@@ -1,6 +1,6 @@
 # macwinnie-enhanced-logging
 
-Last built version: `v0.1.1`
+Last built version: `v0.1.2`
 
 Batteries-included logging for Python applications.
 
