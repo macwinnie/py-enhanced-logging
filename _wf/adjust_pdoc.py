@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from datetime import UTC
 from datetime import datetime
 from pathlib import Path
 
@@ -36,7 +37,7 @@ insert_html = f"""
 """
 
 insert = etree.fromstring(insert_html, parser=etree.HTMLParser())
-date = datetime.now().strftime("%a %b %d %Y, %H:%M:%S %Z")
+date = datetime.now(UTC).strftime("%a %b %d %Y, %H:%M:%S %Z")
 insert.find('.//span[@id="update_date"]').text = date
 
 contents = etree.fromstring(

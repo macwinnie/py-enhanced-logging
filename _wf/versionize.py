@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from pathlib import Path
 import re
+from pathlib import Path
 
 import git
-from tomlkit import parse, dumps
+from tomlkit import dumps
+from tomlkit import parse
 
 
 def bump_patch(v: str) -> str:

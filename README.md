@@ -11,6 +11,8 @@ Batteries-included logging for Python applications.
 
 It supports both **developer-friendly console logs** and **structured JSON logs** suitable for production environments like Kubernetes.
 
+Further info: see [GitHub Repo](https://github.com/macwinnie/py-enhanced-logging) and [Online-Documentation](https://macwinnie.github.io/py-enhanced-logging).
+
 ---
 
 ## Features
