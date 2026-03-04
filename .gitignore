@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.uv*
+.mypy*
+
+# MacOS
+.DS_*
+__MACOSX/
+.AppleDouble
+.LSOverride
+
+# (virtual) environments
+.venv
+.env*
+!.env.example
+
+# Artifacts
+*.sqlite
+artifacts
+
+manual-secrets

@@ -1,0 +1,114 @@
+exclude: docs
+default_language_version:
+  python: python3
+repos:
+  - repo: local
+    hooks:
+      - id: update-pre-commit
+        # Keep pre-commits up to date:
+        # Will BREAK commit when versions did change, so commit has to be re-initiated.
+        name: update all hooks to latest
+        language: system
+        entry: pre-commit
+        args:
+          - autoupdate
+        always_run: true
+        pass_filenames: false
+        fail_fast: true
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        # args: ["--severity=warning"]  # Optionally only show errors and warnings
+
+  - repo: https://github.com/psf/black
+    rev: 26.1.0
+    hooks:
+      - id: black
+        args:
+          - "--line-length=100"
+          # - "--check"
+          # - "--diff"
+
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 3.6.0
+    hooks:
+      - id: editorconfig-checker
+
+  - repo: https://github.com/pycqa/isort
+    rev: 8.0.1
+    hooks:
+      - id: isort
+        args:
+          - --profile=black
+          - --force-single-line
+
+    # Avoid blanket NOQA use (should always have code attached)
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-check-blanket-noqa
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+
+      # This hook replaces double quoted strings with single quoted strings.
+      # - id: double-quote-string-fixer
+
+      # Make sure files end in a newline and only a newline
+      - id: end-of-file-fixer
+
+      # Make sure all yaml is valid
+      - id: check-yaml
+        args: [ --allow-multiple-documents ]
+
+      # Attempts to load all json files to verify syntax.
+      - id: check-json
+
+      # Make sure no merge-conflict markers (<<<</====/>>>>) are left
+      - id: check-merge-conflict
+
+      # Make sure no debugger imports / breakpoint()s are left
+      - id: debug-statements
+
+      # Checks for the existence of private keys.
+      - id: detect-private-key
+
+      # Make sure we don't add submodule
+      - id: forbid-new-submodules
+
+      # Attempts to load all TOML files to verify syntax.
+      - id: check-toml
+
+      # Prevent from accidental commits to master
+      - id: no-commit-to-branch
+        args: [ --branch, main ]
+
+    # Make sure to have no print statements left
+  - repo: local
+    hooks:
+      - id: no-print-statements
+        name: Forbid print statements
+        description: Check for unwanted print statements
+        entry: '\bprint\('
+        language: pygrep
+        types: [python]
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.2
+    hooks:
+      - id: pyupgrade
+        args:
+          - "--py313-plus"
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.19.1'
+    hooks:
+      - id: mypy
+        language: system
+        pass_filenames: false
+        args: [ '.' ]
