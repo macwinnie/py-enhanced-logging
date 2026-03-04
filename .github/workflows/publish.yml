@@ -95,7 +95,6 @@ jobs:
           fi
 
       - name: Publish to PyPI (Trusted Publishing)
-        if: steps.versionize.outputs.version_changed == '1'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: ${{ env.WD_PATH }}/dist
