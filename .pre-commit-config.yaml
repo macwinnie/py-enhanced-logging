@@ -23,7 +23,7 @@ repos:
         # args: ["--severity=warning"]  # Optionally only show errors and warnings
 
   - repo: https://github.com/psf/black
-    rev: 26.1.0
+    rev: 26.3.0
     hooks:
       - id: black
         args:

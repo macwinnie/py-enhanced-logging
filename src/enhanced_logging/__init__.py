@@ -292,7 +292,6 @@ def _base_processors(cfg: LogConfig) -> list[Any]:
         structlog.processors.TimeStamper(fmt="iso", utc=cfg.utc_timestamps),
         structlog.processors.add_log_level,
         structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
         _render_fmt,
         _maybe_speak,  # safe no-op unless LOG_SPEAK=1
     ]
@@ -345,29 +344,45 @@ def configure_logging(config: LogConfig | None = None) -> None:
     if not cfg.keep_existing_handlers:
         root.handlers.clear()
 
-    if not any(isinstance(h, logging.StreamHandler) for h in root.handlers):
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(cfg.level)
-        handler.setFormatter(logging.Formatter("%(message)s"))
-        root.addHandler(handler)
-
-    processors = _base_processors(cfg)
+    shared = _base_processors(cfg)
 
     if cfg.format == "json":
-        processors += [
+        formatter_processors = [
+            structlog.processors.format_exc_info,
             _jsonify_event,
             _drop_private_keys,
             structlog.processors.JSONRenderer(),
         ]
     else:
-        processors += [
+        formatter_processors = [
             _humanize_event,
             _drop_private_keys,
             structlog.dev.ConsoleRenderer(),
         ]
 
+    formatter = structlog.stdlib.ProcessorFormatter(
+        foreign_pre_chain=shared,
+        processors=formatter_processors,
+        keep_exc_info=False,
+        keep_stack_info=False,
+    )
+
+    if not any(isinstance(h, logging.StreamHandler) for h in root.handlers):
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(cfg.level)
+        handler.setFormatter(formatter)
+        root.addHandler(handler)
+    else:
+        for handler in root.handlers:
+            if isinstance(handler, logging.StreamHandler):
+                handler.setLevel(cfg.level)
+                handler.setFormatter(formatter)
+
     structlog.configure(
-        processors=processors,
+        processors=[
+            *shared,
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
         logger_factory=LoggerFactory(),
         wrapper_class=BoundLogger,
         cache_logger_on_first_use=True,
